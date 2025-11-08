@@ -24,7 +24,11 @@ export default defineConfig({
   use:
   {
     browserName : 'chromium'    , //which browser to use
-    headless :  false      //instead of typing in command lien to run in head mode , mention in confi file 
+    headless :  false  ,    //instead of typing in command lien to run in head mode , mention in confi file 
+    screenshot : 'on' ,  //to take screenshots on every step
+    trace : 'retain-on-failure'   //to take logs of every steps
+
+
   }
 });
 

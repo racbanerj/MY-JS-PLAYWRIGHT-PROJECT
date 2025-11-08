@@ -1,6 +1,6 @@
 const{test,expect} = require('@playwright/test')   //imprting test and expect annotations
 const { AsyncLocalStorage } = require('async_hooks')
-test.only ('wait playwright test',async ({browser,page})=>
+test ('wait playwright test',async ({browser,page})=>
 
 {
     const userName=page.locator("#userEmail");

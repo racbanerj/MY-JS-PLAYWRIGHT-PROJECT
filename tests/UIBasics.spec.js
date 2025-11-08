@@ -80,7 +80,7 @@ test ('dropdown checkbox web popup tests',async ({browser,page})=>
 
 });
 
-test.only ('child windows handling',async ({browser})=>
+test ('child windows handling',async ({browser})=>
 {
     //when a new page is opened from a yper link , we have to feed that information in a new page variable
     //in the below lines of code , we are using two lined asynchronusly i.e. waiting for a new page and clicking on the hyper link to get the new page is happening parallelly 
@@ -106,7 +106,9 @@ test.only ('child windows handling',async ({browser})=>
         const domain=arrayText[1].split(" ") [0]; //taking the 1nth index and splitting that by space and storing the 0th index from the retreived value into domain variable
         console.log(domain);
         await page.locator("input#username").fill(domain); //grabbing the text from page 2 and typing the text in page 1 username feild
-        await page.pause();
-        console.log(await page.locator("input#username").textContent());
+        //await page.pause();
+        console.log(await page.locator("input#username").textContent());//textContent() will not grab the text which is typed by the user because the text is not attached to DOM
+        console.log(await page.locator("input#username").inputValue())// inputValue() is used to grab texts written by the user on runtime
+
 
 });
