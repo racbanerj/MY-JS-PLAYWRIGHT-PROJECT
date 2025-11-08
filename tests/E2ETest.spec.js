@@ -5,10 +5,14 @@ login to app
 select the product by grabbing all products in an array variable -> use for loop to select the preferred product -> add to cart
 wait for the cart products page is loaded fullu  by waitfor() func as auto waiting doesnot support isVisible() func in playwright
 validate that the product is added in cart by checking if the product name is present by isvisible() func
+add address, validate email id  and checkout in checkout page
+validate order confirmation note and order id
+validate the order id is present in order history page
 
 
 */
 const {test,expect}= require('@playwright/test');
+const email="rachanabanerjee66@gmail.com"
 test ("purchase order id validation", async ({browser,page})=>
 {
 const userName=page.locator("#userEmail");
@@ -16,8 +20,9 @@ const password= page.locator("#userPassword");
 const login= page.locator("#login");
 const products= page.locator(".card-body"); //grabbing all products in an array variable
 const prductName= "ZARA COAT 3";
+
 await page.goto("https://rahulshettyacademy.com/client");
-await userName.fill("rachanabanerjee66@gmail.com");
+await userName.fill(email);
 await password.fill("Delilah@1312");
 await login.click(); //logged in
 await page.locator(".card-body").last().waitFor();//wait till all the products are loaded 
@@ -47,20 +52,57 @@ const boolCartproduct= await page.locator("h3:has-text('ZARA COAT 3')").isVisibl
  for(let i=0;i<optionCount;i++)
 
  {
-const text= dropdown.locator("button").nth(i).textContent();
+const text= await dropdown.locator("button").nth(i).textContent();
 if(text === ' India')
 {
-    await dropdown.locator("button").nth(i).click();
+    await dropdown.locator("button").nth(i).click(); //selected india
     break;
 
 }
  }
- await page.pause();
+ 
+ await expect( page.locator(".user__name [type='text']").first()).toHaveText(email); //confirming email id in checkout page
+
+await page.locator(".btnn").click();//clicking on checkout
+await expect ( page.locator(".hero-primary")).toHaveText(" Thankyou for the order. "); //validating order confirmation text
+const orderId=await page.locator("label.ng-star-inserted").textContent();
+console.log(orderId);
+
+//validate order id in order history table
+
+await page.locator("button[routerlink*= 'dashboard/myorders']").click();  //navigating to orders page
+
+await page.locator("tbody").waitFor();
+const orderrows=await page.locator("tbody tr"); //getting cound of all orders from order list
+for(let i=0;i<await orderrows.count();++i) //finding my order 
+{
+const ordertext= await orderrows.nth(i).locator("th").textContent();
+if(orderId.includes(ordertext))
+{
+await orderrows.nth(i).locator("button").first().click();
+
+ console.log("Order found");
+break;
+}
+}
+
+await expect(page.locator(".title")).toHaveText(prductName);
 
 
 
+/*await page.locator("tbody").waitFor();
+const rows = await page.locator("tbody tr");
 
 
+for (let i = 0; i < await rows.count(); ++i) {
+   const rowOrderId = await rows.nth(i).locator("th").textContent();
+   if (orderId.includes(rowOrderId)) {
+      await rows.nth(i).locator("button").first().click();
+      break;
+   }
+}
+const orderIdDetails = await page.locator(".col-text").textContent();
+expect(orderId.includes(orderIdDetails)).toBeTruthy();
 
-
+*/
 });
