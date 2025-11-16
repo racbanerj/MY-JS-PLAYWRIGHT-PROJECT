@@ -112,3 +112,37 @@ test ('child windows handling',async ({browser})=>
 
 
 });
+
+test.only ('Playwright special locators', async( {browser,page})=>
+    {
+
+    await page.goto("https://rahulshettyacademy.com/angularpractice/");
+
+    await page.getByLabel("Employed").check();/*getbyLabel is a special locator of playwright to find any element which has a text 
+                                          with the tagname 'label'.  
+                                          we can also click on the element/checkbox/radion button nearest to that label
+                                          check() is also a special func of playwright to check checkboxes instead of click() */
+
+
+    await page.getByLabel("Check me out if you Love IceCreams!").click(); 
+    await page.getByLabel("Gender").selectOption("Female"); //selectOption method will only work on those dropdown elemnts which has select tag in dom
+    await page.getByPlaceholder("Password").fill("abcnp123"); /*getByPlaceholder() is a special locator of playwright which
+                                             is applicable only when dom has an attribute called 'placeholder' for the element. */
+
+    await page.getByRole("button", {name:'Submit'}).click(); /*getByRole is a special playwright locator where we can 
+                                      select a element by its role(role can be understood by tagname or class),here we are selecting 
+                                      button role and out of all buttons in the page, type the name of that button to specifically select that element. */
+    await page.getByText('Success! The Form has been submitted successfully!.').isVisible(); /*getbyText() is a playwright locator to 
+                                       grab an element which has a visible text on the webpage.*/
+
+
+   await page.getByRole("link",{name: "Shop"}).click();  //clicking on a link by getByrole locator where the tagname in dom is @(i.i a link)                                    
+   //await page.locator("app-card").filter({hasText: "Samsung Note 8"}).getByRole("button").click(); 
+                                       /* first using tagname as 
+                                        CSS  locator to get all the visible products , the filtering the specific product by 
+                                        hasText filter of playwright -> then click on add button by getByRole locator on the same line 
+                                        of code */
+    await page.locator("app-card").filter({hasText: 'Nokia Edge'}).getByRole("button").click();                                     
+    await page.getByText("  Checkout ( 1 ) ").isVisible();                            
+
+});
