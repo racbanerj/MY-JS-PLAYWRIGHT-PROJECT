@@ -15,7 +15,7 @@ await loginbtn.click();
 //Eventhough playwright has auto waiting mechanism, it doesnot implement autowaiting in case of "alltextcontents() function. so it will throw error because the
 // alltextcontents() will be called before the page loads all the content
 //to resolve this, we will use the function  waitForLoadState("networkidle").
-await page.waitForLoadState("networkidle"); // this function makes sure all the network calls are made (api service calls) and page is fully loaded, before going to the next step so the all texts contents are fetched without any error
+ // this function makes sure all the network calls are made (api service calls) and page is fully loaded, before going to the next step so the all texts contents are fetched without any error
 
 const prodTitle= await page.locator(".card-body b").allTextContents();
 console.log(prodTitle);
