@@ -5,11 +5,15 @@ test ('browser context playwright test',async function({browser})
     //playwright code
     
     const context =  await browser.newContext();  //newContext method helps to open a new instance of browser
-                                                  //inside newContext method we can add parameters to inject cookies with which the brpwser will open
-    const page= await context.newPage();          //newPage method creates new page after opening the browser 
+                                                  /*inside newContext method we can add parameters to inject cookies,permission,local storage, session
+                                                   with which the brpwser will open*/
+    const page= await context.newPage();          //newPage method creates new page(new tab) after opening the browser 
     await page.goto("https://saucelabs.com/");
     //browser here is fixture/global default variable in playwright
-    
+    //fixture is a reusable test setup (readyy to use object/resource) automatically created and cleaned up by playwright
+    /*browser ---> helps to create context
+      context ---> helps to create a page
+      page ---> helps to writes test steps inside it */
     //step 2
 
 });
@@ -18,7 +22,7 @@ test ('page playwright test',async ({browser,page})=>
     //playwright code
     //test.only is used when you want to run only that test function form that file
     // in java script ()=> can be used to create a function without name to keep the code lighter(anonymous function)
-    //newContext and newPage method is default, so we we declare the fixture called "page" inside the funcion parameter, it will work as same as the above function. "Page" ficture is a default variable of playwrite which contains the mechanism of newcontext and newPgae
+    //newContext and newPage method is default, so we declare the fixture called "page" inside the funcion parameter, it will work as same as the above function. "Page" ficture is a default variable of playwrite which contains the mechanism of newcontext and newPgae
 
    
     
@@ -36,9 +40,9 @@ test ('page playwright test',async ({browser,page})=>
     await userName.fill("");  //fill("") is used to erase the existing texts written on the textbox already
     await userName.fill("rahulshettyacademy"); //typing correct username this time
     await signinBtn.click(); //user should be able to login successfully now
-    console.log(await cardTitles.first().textContent()); //locator used traversing from parent to child; first() method used to select the first matching css as the css has 4 matching element .
-    console.log(await cardTitles.nth(1).textContent());  //nth() is used to select the required matching element csss from the index(here we need 2nd element so used index 1)
-    console.log(await cardTitles.last().textContent());  //first() method used to select the last matching css .
+    console.log(await cardTitles.first().textContent()); //locator used traversing from parent to child; first() method used to select the first matching element as the css has 4 matching element .
+    console.log(await cardTitles.nth(1).textContent());  //nth() is a selector engine used to pick a specific element from a group of matched elements — based on its index.
+    console.log(await cardTitles.last().textContent());  //last() method used to select the last matching element of the css .
     const allTitles= await cardTitles.allTextContents(); //allTestContents() method is used to fetch array of multiple element texts of all the matching elements of the css.npx playwright
     console .log(allTitles);
 
@@ -47,7 +51,8 @@ test ('page playwright test',async ({browser,page})=>
 });
 test ('dropdown checkbox web popup tests',async ({browser,page})=>
 
-{
+{                                                  //using await ensures code waits until the action finishes.
+                                                // await can only be used inside an async function
     const userName= page.locator('input#username');  //storing the username element in a global variable which can be used multiple times throughout the class
     const signinBtn= page.locator('#signInBtn');
     const password = page.locator('input#password');
@@ -82,7 +87,7 @@ test ('dropdown checkbox web popup tests',async ({browser,page})=>
 
 test ('child windows handling',async ({browser})=>
 {
-    //when a new page is opened from a yper link , we have to feed that information in a new page variable
+    //when a new page is opened from a hyper link , we have to feed that information in a new page variable
     //in the below lines of code , we are using two lined asynchronusly i.e. waiting for a new page and clicking on the hyper link to get the new page is happening parallelly 
     // two lines of code is working as an array and returning a new page to the [newPage] variable in array format
     //child pages are always returned in array format as multiple pages can be opened 
@@ -93,13 +98,16 @@ test ('child windows handling',async ({browser})=>
   
     await page.goto("https://rahulshettyacademy.com/loginpagePractise/");
 
-    const [newPage]=await Promise.all(
+    const [newPage]=await Promise.all
+    (
         [
-           context.waitForEvent('page'),//listen for any new page pending,rejected,fulfilled
-           doclink.click(),
-        
-        ])//new page is opened
-        const newPageheading =  newPage.locator(".red");
+           context.waitForEvent('page'),//listen for any new page pending,rejected,fulfilled  : promise 1 that resolves when a new tab opens
+           doclink.click(),  // promise 2 that resolves when the click action finishes
+        ]
+    )//new page is opened    Promise.all() is used to run multiple Promises at same time and wait for all of them to finish.
+    //Without Promise.all, there is a race condition: the click could open a page before Playwright starts listening → the test may fail it.
+     // the new Page object is returned and stored in newPage variable
+    const newPageheading =  newPage.locator(".red");
         const text= await newPageheading.textContent();
         console.log(text);
         const arrayText= text.split("@"); //splitting the retreived text by the character @
@@ -136,13 +144,14 @@ test.only ('Playwright special locators', async( {browser,page})=>
                                        grab an element which has a visible text on the webpage.*/
 
 
-   await page.getByRole("link",{name: "Shop"}).click();  //clicking on a link by getByrole locator where the tagname in dom is @(i.i a link)                                    
+   await page.getByRole("link",{name: "Shop"}).click();  //clicking on a link by getByrole() locator where the tagname in dom is @(i.i a link)                                    
    //await page.locator("app-card").filter({hasText: "Samsung Note 8"}).getByRole("button").click(); 
                                        /* first using tagname as 
                                         CSS  locator to get all the visible products , the filtering the specific product by 
                                         hasText filter of playwright -> then click on add button by getByRole locator on the same line 
                                         of code */
-    await page.locator("app-card").filter({hasText: 'Nokia Edge'}).getByRole("button").click();                                     
+    await page.locator("app-card").filter({hasText: 'Nokia Edge'}).getByRole("button").click();   //filter() method narrows down the returned matching elements wither by "hasText"   or "has"    
+                               //hasText filters elements that contain the given text.  "has" Filters elements that contain another locator as a child.                     
     await page.getByText("  Checkout ( 1 ) ").isVisible();                            
 
 });
