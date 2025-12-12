@@ -30,4 +30,31 @@ await framepage.locator("div a[href='#/all-access-subscription']:visible").nth(1
   
   console.log(textcheck)  ;                                 
                                         
-                                        })
+   })
+
+test ('Screenshots', async({browser,page})=>
+{
+
+await page.goto("https://rahulshettyacademy.com/AutomationPractice/");
+
+await expect(page.locator("#displayed-text")).toBeVisible(); // tobeVisible is an assertion method which returns boolean value
+
+await expect(page.locator("#displayed-text")).toBeHidden();  //toBeHidden asserts that the element is hidden in webpage
+await page.screenshot({path: 'screenshot.png'}); //page.screenshot is playwright method to take screenshot  and path added here as location to store the screenshot
+                                                //this is page level screenshot
+
+await page.locator("#displayed-text").screenshot({path: 'partialScreenshot.png'})  ;                                        
+})
+
+
+test.only ('visual comparison', async({page})=>
+{
+
+await page.goto("https://rahulshettyacademy.com/AutomationPractice/");
+
+ expect(await page.screenshot()).toMatchSnapshot('landingPage.png'); // taking new screenshot and comparing it with existing screenshot 'landing.png'
+                                                      //if landing.png i.e. previous screenshot doesnot exist, then for first time tets will fail and create a screenshot. And in second time test will pass and compare the new screenshot with the previous screenshot which now exists in the test class
+                                                      
+
+})
+
